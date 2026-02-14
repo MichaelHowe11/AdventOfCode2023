@@ -56,7 +56,7 @@ int leftRightNum(string l) {
         numStr+=numStr;
     }
     
-    cout << numStr << endl;
+    // cout << numStr << endl;
     
 
     if (numStr != "") {

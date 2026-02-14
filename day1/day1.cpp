@@ -35,11 +35,8 @@ int main() {
 				break;
 			}
 		}
-		cout << line << endl;
-		cout << numString << endl;
 
 		sum+=stoi(numString);
-		cout << "sum: " <<sum << endl;
 		numString="";
 	}
 	cout << sum << endl;
