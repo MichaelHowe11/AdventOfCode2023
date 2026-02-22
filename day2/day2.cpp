@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
-#include <string>
+#include <cctype>
 using namespace std;
 
 map<string,int> resetColors(map<string,int> colors) {
@@ -11,7 +11,7 @@ map<string,int> resetColors(map<string,int> colors) {
     return colors;
 }
 
-bool checkPossibility(map<string,int> colors) {
+bool checkPoss(map<string,int> colors) {
     if (colors.at("red") <= 12 && colors.at("green") <= 13 && colors.at("blue") <= 14) {
         return true;
     }
@@ -22,70 +22,62 @@ bool checkPossibility(map<string,int> colors) {
 
 
 int main() {
-    ifstream file("sample.txt");
-    string line;
+	ifstream file("input.txt");
+	string line;
 
 
-    map<string,int> colors = {{"red",0},{"green",0},{"blue",0}};
+	map<string,int> colors = {{"red",0},{"green",0},{"blue",0}};
+
+	int sum = 0;
+
+	while(getline(file,line)) {
+		cout << line << endl;
+		int gameNum = line[5]-'0';
+		if (isdigit(line[6]) && !isdigit(line[7])) {
+			gameNum = stoi(line.substr(5,2));
+		}	
+	    	line+=";";
 
 
-    int gameN = 0;
-    int possibleGames = 0;
+		for (int i = 0; i < line.length(); i++) {
+			for (int e = 3; e < 6; e++) {
+				if (colors.find(line.substr(i,e)) != colors.end()) {
+					if (isdigit(line[i-3])) {
+						colors.at(line.substr(i,e))+=stoi(line.substr(i-3,2));
+					} else {
+						colors.at(line.substr(i,e))+=line[i-2]-'0';
+					}
+				}
+			}
+			if (line[i]==';') {
+				cout << "red: " << colors.at("red") << endl;
+				cout << "green: " << colors.at("green") << endl;
+				cout << "blue: " << colors.at("blue") << endl;
 
 
-    while(getline(file,line)) {
-        cout << line << endl;
-        // cout << stoi(&line[5]) << endl;
-        gameN = stoi(&line[5]);
-        bool isPossible = false;
-        for (int i = 8; i < line.length(); i++) {
-            // if (colors.at("red") != 0) {
-            //     cout << colors.at("blue") << endl;
-            // }
-            if (line[i] == ';') {
-                cout << colors.at("red") << " " << colors.at("green") << " " << colors.at("blue") << " " << endl;
-                if (checkPossibility(colors) && !isPossible) {
-                    possibleGames+=gameN;
-                    isPossible = true;
-                } else if (!checkPossibility(colors) && isPossible){
-                    possibleGames-=gameN;
-                    break;
-                } else if (!checkPossibility(colors)) {
-                    break;
-                }
-                colors = resetColors(colors);
-            } else if (isdigit(line[i])) {
-                for (int e = 3; e < 6; e++) {
-                    
-                    if (colors.find(line.substr(i+2,e)) != colors.end()) {
-                        string num = "";
-                        
-                        if (isdigit(line[i-1])) {
-                            num+=line[i-1];
-                            num+=line[i];
-                        } else {
-                            num = line[i];
-                        }
-                        colors.at(line.substr(i+2,e)) += stoi(num);
-                        
-                        cout << "{" << line.substr(i+2,e) << stoi(num) << "}" << endl;
-                        
-                        
-                        num = "";
-                        // break;
-                    }
-                }
-            }
-            
-            
-            
+				if (checkPoss(colors) && i==line.length()-1) {
+					sum+=gameNum;
+					cout << "Possible at " << gameNum << endl;
+					break;
+				} else if (!checkPoss(colors)) {
+					break;
+				}
+				colors = resetColors(colors);
+				
+				
+			} 
+		}
 
-        }
-        
-        cout << possibleGames << endl;
-        colors = resetColors(colors);
-        
-    }
-    
+
+
+		colors = resetColors(colors);
+	}
+
+	cout << sum << endl;
+
+
 
 }
+    
+
+
